@@ -39,19 +39,14 @@ A complete, clean, and modular implementation of a **Single-Cycle RISC-V (RV32I)
       +----------------- Next PC Logic / Multiplexers <-------+
 ```
 
-### Module Breakdown
-| Module | File | Function |
-|---|---|---|
-| **Program Counter** | [`src/Program_Counter.v`](src/Program_Counter.v) | Holds the 32-bit address of current instruction; updates on clock edge. |
-| **Instruction Memory** | [`src/Instruction_Memory.v`](src/Instruction_Memory.v) | Stores 64 words (32-bit each) of instructions; indexed by `PC[7:2]`. |
-| **Register File** | [`src/Register_File.v`](src/Register_File.v) | 32 general-purpose 32-bit registers (`x0` to `x31`). `x0` is hardwired to 0. |
-| **Immediate Generator** | [`src/Imm_Gen.v`](src/Imm_Gen.v) | Extracts and sign-extends immediate fields (I, S, B, J, U formats). |
-| **Control Unit** | [`src/Control_Unit.v`](src/Control_Unit.v) | Decodes 7-bit opcode to generate datapath control signals. |
-| **ALU Control** | [`src/ALU_Control.v`](src/ALU_Control.v) | Decodes `ALUOp`, `funct3`, and `funct7[5]` into 4-bit ALU operation code. |
-| **ALU** | [`src/ALU.v`](src/ALU.v) | Performs 32-bit arithmetic, logic, shift, and comparison operations. |
-| **Data Memory** | [`src/Data_Memory.v`](src/Data_Memory.v) | 64-word RAM for `LW` (read) and `SW` (synchronous write) instructions. |
-| **Top Core** | [`src/riscv_top.v`](src/riscv_top.v) | Wires together all components and exposes debug observation signals. |
-| **Single-File Core** | [`src/riscv_single_file.v`](src/riscv_single_file.v) | Combined design file for easy copy-pasting into EDA Playground. |
+### Project Design Structure
+
+The project offers **two design formats** depending on preference:
+1. **Unified Core (Recommended for Presentation & Learning)**:
+   - [`riscv_processor.v`](riscv_processor.v): The entire single-cycle processor in **one clean, continuous module** (~250 lines). All 5 stages (Fetch, Decode, Execute, Memory, Writeback) are clearly visible in sequence without jumping across files!
+   - [`testbench.v`](testbench.v): Simple, self-checking testbench.
+2. **Modular Hierarchy (Alternative for Advanced Grading)**:
+   - Located in [`src/`](src/): Separated into 8 dedicated sub-modules (`Program_Counter.v`, `Instruction_Memory.v`, `Register_File.v`, `Imm_Gen.v`, `Control_Unit.v`, `ALU_Control.v`, `ALU.v`, `Data_Memory.v`) interconnected by [`src/riscv_top.v`](src/riscv_top.v).
 
 ---
 
@@ -107,23 +102,23 @@ gtkwave riscv.vcd
 ## 📁 Repository Structure
 ```
 RiscV/
-├── src/
-│   ├── Program_Counter.v       # 32-bit PC register with synchronous update
-│   ├── Instruction_Memory.v    # 64-word ROM initialized with program
-│   ├── Register_File.v         # 32x32 general purpose register file (x0=0)
-│   ├── Imm_Gen.v               # Sign extension immediate generator
-│   ├── Control_Unit.v          # Main opcode decoder
-│   ├── ALU_Control.v           # ALU operation code generator
-│   ├── ALU.v                   # 32-bit Arithmetic Logic Unit
-│   ├── Data_Memory.v           # Data RAM for load/store
-│   ├── riscv_top.v             # Top-level integrated processor core
-│   └── riscv_single_file.v     # Single-file bundle for EDA Playground
-├── testbench/
-│   ├── tb_riscv.v              # Automated verification testbench with VCD dump
-│   └── tb_interactive.v        # Interactive stdin-based Verilog testbench
-├── interactive_sim.py          # Cycle-accurate interactive simulator & runner
+├── riscv_processor.v           # [MAIN] Unified Single-Module Core (~250 lines, all 5 stages in 1 file!)
+├── testbench.v                 # [MAIN] Testbench for unified processor
+├── interactive_sim.py          # Interactive user-input hardware runner
 ├── run_project.sh              # One-click execution shell script
 ├── PROJECT_GUIDE_HINGLISH.md   # Line-by-line explanation, slides, & viva prep
-└── README.md                   # Project overview & documentation
+├── README.md                   # Project overview & documentation
+├── src/                        # Modular alternative (8 sub-modules + riscv_top.v)
+│   ├── Program_Counter.v
+│   ├── Instruction_Memory.v
+│   ├── Register_File.v
+│   ├── Imm_Gen.v
+│   ├── Control_Unit.v
+│   ├── ALU_Control.v
+│   ├── ALU.v
+│   ├── Data_Memory.v
+│   └── riscv_top.v
+└── testbench/
+    ├── tb_riscv.v
+    └── tb_interactive.v
 ```
-# RiscV

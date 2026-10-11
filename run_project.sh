@@ -39,7 +39,7 @@ case $choice in
             exit 1
         fi
         echo -e "\n[Compiling Verilog files with Icarus Verilog...]"
-        iverilog -o sim_riscv src/*.v testbench/tb_riscv.v
+        iverilog -o sim_riscv riscv_processor.v testbench.v
         echo -e "[Running Simulation...]\n"
         vvp sim_riscv
         echo -e "\nWaveform saved to 'riscv.vcd'. You can open it in GTKWave!"

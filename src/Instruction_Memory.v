@@ -12,14 +12,14 @@ module Instruction_Memory (
     output wire [31:0] instruction    // 32-bit instruction fetched from memory
 );
 
-    // 64 instructions store karne ke liye array (64 words x 32-bit)
+    // 64 instructions are stored in this memory array, with each element holding a 32-bit word.
     reg [31:0] memory [0:63];
 
-    // Word alignment: RISC-V instructions are 4 bytes long,
-    // isliye address ko 4 se divide karte hain (pc >> 2 ya pc[7:2])
+    // Word-aligned access: RISC-V instructions are 4 bytes long, so the memory index is derived using pc >> 2,
+    // which is equivalent to using bits [7:2] of the program counter.
     assign instruction = memory[pc[7:2]];
 
-    // Default test program loaded at startup
+    // Default test program loaded at startup.
     // Instruction encodings:
     // 0: ADDI x1, x0, 5    (x1 = 0 + 5 = 5)          -> 32'h00500093
     // 1: ADDI x2, x0, 10   (x2 = 0 + 10 = 10)        -> 32'h00a00113
@@ -35,12 +35,12 @@ module Instruction_Memory (
     // 11: ADDI x10, x0, 42 (Target of branch, x10=42)-> 32'h02a00513
     integer i;
     initial begin
-        // Pehle saari memory ko NOP (addi x0, x0, 0) se bhar do
+        // First fill the memory with NOP instructions so unused locations have a safe default value.
         for (i = 0; i < 64; i = i + 1) begin
-            memory[i] = 32'h00000013; // NOP instruction
+            memory[i] = 32'h00000013; // NOP instruction: addi x0, x0, 0
         end
 
-        // Sample Program
+        // Sample program for demonstration and verification.
         memory[0]  = 32'h00500093; // ADDI x1, x0, 5    (x1 = 5)
         memory[1]  = 32'h00a00113; // ADDI x2, x0, 10   (x2 = 10)
         memory[2]  = 32'h002081b3; // ADD  x3, x1, x2   (x3 = 15)
@@ -51,7 +51,7 @@ module Instruction_Memory (
         memory[7]  = 32'h00302223; // SW   x3, 4(x0)    (Store x3 in mem[4])
         memory[8]  = 32'h00402403; // LW   x8, 4(x0)    (Load mem[4] to x8)
         memory[9]  = 32'h00408463; // BEQ  x1, x4, 8    (Branch to memory[11])
-        memory[10] = 32'h06300493; // ADDI x9, x0, 99   (Skipped!)
+        memory[10] = 32'h06300493; // ADDI x9, x0, 99   (Skipped by the branch!)
         memory[11] = 32'h02a00513; // ADDI x10, x0, 42  (x10 = 42)
     end
 

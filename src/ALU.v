@@ -14,7 +14,8 @@ module ALU (
     output wire        zero           // 1 if result is zero (used for BEQ/branch)
 );
 
-    // Zero flag: jab result zero hoga to zero flag 1 ho jayega
+    // Zero flag: if the ALU result becomes zero, the zero output is asserted to 1.
+    // This is used by branch instructions such as BEQ to decide whether a branch should be taken.
     assign zero = (result == 32'h00000000);
 
     always @(*) begin

@@ -36,12 +36,12 @@ module Control_Unit (
             // Opcode: 7'b0110011 (51 in decimal / 0x33)
             // -------------------------------------------------------------
             7'b0110011: begin
-                reg_write  = 1'b1;     // Result registers me save hoga
-                alu_src    = 1'b0;     // ALU input 2 register rs2 se aayega
-                alu_op     = 2'b10;    // ALU control dekhega funct3 aur funct7
+                reg_write  = 1'b1;     // Write the arithmetic/logical result back to the destination register.
+                alu_src    = 1'b0;     // The ALU's second operand comes from register rs2.
+                alu_op     = 2'b10;    // ALU control will inspect funct3 and funct7 to choose the operation.
                 mem_read   = 1'b0;
                 mem_write  = 1'b0;
-                mem_to_reg = 1'b0;     // ALU result writeback hoga
+                mem_to_reg = 1'b0;     // The ALU result is passed directly to the write-back path.
                 branch     = 1'b0;
                 jump       = 1'b0;
             end
@@ -51,12 +51,12 @@ module Control_Unit (
             // Opcode: 7'b0010011 (19 in decimal / 0x13)
             // -------------------------------------------------------------
             7'b0010011: begin
-                reg_write  = 1'b1;     // Result registers me save hoga
-                alu_src    = 1'b1;     // ALU input 2 immediate value hoga
-                alu_op     = 2'b11;    // ALU control dekhega funct3
+                reg_write  = 1'b1;     // Store the computed result in the destination register.
+                alu_src    = 1'b1;     // Use the immediate value as the ALU's second operand.
+                alu_op     = 2'b11;    // ALU control will decode the funct3 field for the operation.
                 mem_read   = 1'b0;
                 mem_write  = 1'b0;
-                mem_to_reg = 1'b0;     // ALU result writeback hoga
+                mem_to_reg = 1'b0;     // The ALU output is written back directly.
                 branch     = 1'b0;
                 jump       = 1'b0;
             end
@@ -66,12 +66,12 @@ module Control_Unit (
             // Opcode: 7'b0000011 (3 in decimal / 0x03)
             // -------------------------------------------------------------
             7'b0000011: begin
-                reg_write  = 1'b1;     // Memory se padha hua data register me write hoga
-                alu_src    = 1'b1;     // Address calculate karne ke liye (rs1 + imm)
-                alu_op     = 2'b00;    // ALU ADD karega address nikalne ke liye
-                mem_read   = 1'b1;     // Memory se read enable karo
+                reg_write  = 1'b1;     // Load the value read from memory into the destination register.
+                alu_src    = 1'b1;     // Compute the effective memory address as rs1 + immediate.
+                alu_op     = 2'b00;    // ALU does an addition to calculate the address.
+                mem_read   = 1'b1;     // Enable the data memory read port.
                 mem_write  = 1'b0;
-                mem_to_reg = 1'b1;     // Memory ka data register file me bhejo
+                mem_to_reg = 1'b1;     // Select memory data for the register write-back path.
                 branch     = 1'b0;
                 jump       = 1'b0;
             end
@@ -81,11 +81,11 @@ module Control_Unit (
             // Opcode: 7'b0100011 (35 in decimal / 0x23)
             // -------------------------------------------------------------
             7'b0100011: begin
-                reg_write  = 1'b0;     // Register me kuch nahi likhna
-                alu_src    = 1'b1;     // Address calculate karne ke liye (rs1 + imm)
-                alu_op     = 2'b00;    // ALU ADD karega address nikalne ke liye
+                reg_write  = 1'b0;     // No destination register is updated for a store instruction.
+                alu_src    = 1'b1;     // Compute the memory address as rs1 + immediate.
+                alu_op     = 2'b00;    // ALU performs address calculation using addition.
                 mem_read   = 1'b0;
-                mem_write  = 1'b1;     // Memory me write enable karo
+                mem_write  = 1'b1;     // Enable the data memory write port.
                 mem_to_reg = 1'b0;
                 branch     = 1'b0;
                 jump       = 1'b0;
@@ -96,13 +96,13 @@ module Control_Unit (
             // Opcode: 7'b1100011 (99 in decimal / 0x63)
             // -------------------------------------------------------------
             7'b1100011: begin
-                reg_write  = 1'b0;     // No register write
-                alu_src    = 1'b0;     // Compare rs1 and rs2
-                alu_op     = 2'b01;    // ALU subtract karega comparison ke liye
+                reg_write  = 1'b0;     // Branch instructions do not write a normal register result.
+                alu_src    = 1'b0;     // Compare rs1 and rs2 as operands.
+                alu_op     = 2'b01;    // ALU performs subtraction to determine equality/inequality.
                 mem_read   = 1'b0;
                 mem_write  = 1'b0;
                 mem_to_reg = 1'b0;
-                branch     = 1'b1;     // Branch signal activate karo
+                branch     = 1'b1;     // Activate the branch control signal.
                 jump       = 1'b0;
             end
 
@@ -111,14 +111,14 @@ module Control_Unit (
             // Opcode: 7'b1101111 (111 in decimal / 0x6F)
             // -------------------------------------------------------------
             7'b1101111: begin
-                reg_write  = 1'b1;     // Return address (PC+4) rd me save hoga
+                reg_write  = 1'b1;     // Save the return address (PC + 4) into the destination register.
                 alu_src    = 1'b0;
                 alu_op     = 2'b00;
                 mem_read   = 1'b0;
                 mem_write  = 1'b0;
                 mem_to_reg = 1'b0;
                 branch     = 1'b0;
-                jump       = 1'b1;     // Unconditional jump flag
+                jump       = 1'b1;     // Set the unconditional jump flag.
             end
 
             default: begin

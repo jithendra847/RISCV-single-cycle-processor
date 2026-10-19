@@ -24,20 +24,20 @@ module Register_File (
     reg [31:0] registers [0:31];
     integer i;
 
-    // Asynchronous Read (Combinational Logic):
-    // RISC-V rule: Register x0 is ALWAYS 0!
+    // Asynchronous read (combinational logic):
+    // RISC-V convention requires register x0 to always remain zero.
     assign read_data1 = (rs1 == 5'd0) ? 32'h00000000 : registers[rs1];
     assign read_data2 = (rs2 == 5'd0) ? 32'h00000000 : registers[rs2];
 
-    // Synchronous Write (Clock ke rising edge par write hota hai):
+    // Synchronous write: data is written on the rising edge of the clock.
     always @(posedge clk or posedge reset) begin
         if (reset) begin
-            // Reset par saare registers ko 0 kar do
+            // Clear all registers to zero when reset is asserted.
             for (i = 0; i < 32; i = i + 1) begin
                 registers[i] <= 32'h00000000;
             end
         end else if (reg_write && (rd != 5'd0)) begin
-            // Agar reg_write enabled hai AND rd zero nahi hai (kyunki x0 hamesha 0 rehta hai)
+            // Only write when reg_write is enabled and the destination is not x0, because x0 must remain constant zero.
             registers[rd] <= write_data;
         end
     end

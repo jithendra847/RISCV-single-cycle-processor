@@ -22,17 +22,17 @@ module Data_Memory (
     reg [31:0] memory [0:63];
     integer i;
 
-    // Word alignment: RISC-V addresses are in bytes,
-    // to word-aligned index ke liye hum bits [7:2] use karte hain
+    // Word alignment: RISC-V addresses are byte-addressed, so the memory index is derived from bits [7:2]
+    // to convert a byte address into a 32-bit word-aligned index.
     wire [5:0] word_addr = addr[7:2];
 
-    // Asynchronous Read: Agar mem_read 1 hai to memory se data do, warna 0
+    // Asynchronous read: if mem_read is asserted, return the value from memory; otherwise output zero.
     assign read_data = (mem_read) ? memory[word_addr] : 32'h00000000;
 
-    // Synchronous Write: Clock ke posedge par write hota hai
+    // Synchronous write: data is written on the rising edge of the clock.
     always @(posedge clk or posedge reset) begin
         if (reset) begin
-            // Reset hone par saari data memory 0 kar do
+            // On reset, clear the entire data memory to zero.
             for (i = 0; i < 64; i = i + 1) begin
                 memory[i] <= 32'h00000000;
             end

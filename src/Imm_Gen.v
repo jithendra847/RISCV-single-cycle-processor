@@ -50,7 +50,7 @@ module Imm_Gen (
                 imm_ext = {instruction[31:12], 12'h000};
             end
 
-            // Default case (R-type ya unknown instructions ke liye 0)
+            // Default case: for R-type or unknown instructions, the immediate value remains zero.
             default: begin
                 imm_ext = 32'h00000000;
             end

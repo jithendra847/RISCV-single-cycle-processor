@@ -1,6 +1,6 @@
 # Single-Cycle RISC-V Processor: Project Guide
 
-**Prepared by: Jithendra**
+**Prepared by: Jithendra and teja**
 
 This guide describes the design, instruction flow, simulation options, and presentation points for the 32-bit single-cycle RISC-V processor implemented in this project.
 
@@ -95,27 +95,6 @@ vvp sim_interactive
 2. Introduce the datapath blocks and explain how they connect.
 3. Trace an arithmetic instruction from fetch through writeback.
 4. Explain how loads, stores, branches, and jumps differ from arithmetic instructions.
-5. Demonstrate the Verilog testbench and describe the observed result.
+5. Demonstrate the Python simulation or the Verilog testbench and describe the observed result.
 6. Discuss the single-cycle trade-off: simple control flow, with the clock period set by the longest instruction path.
 
-## 9. Review questions
-
-### Why does the longest instruction path determine the clock period?
-
-All combinational work for an instruction must settle before the state updates at the clock edge. A load commonly has a long path because it fetches an instruction, reads registers, calculates an address, reads data memory, and selects data for writeback.
-
-### Why does register `x0` always read as zero?
-
-The RISC-V integer register convention defines `x0` as a constant zero. The design suppresses writes to this register, so instructions cannot change its value.
-
-### What does the ALU source selection do?
-
-It selects the ALU's second input. Register-register operations use the second source register; immediate, load, and store operations use an immediate value.
-
-### How does a load choose what to write back?
-
-The writeback selection chooses the value read from data memory instead of the ALU address calculation.
-
-### How does an equality branch work?
-
-The processor compares the two source operands. If the equality condition is true, it adds the branch offset to the current PC and selects that target; otherwise, it advances to the next sequential instruction.
